@@ -10,7 +10,6 @@ categories = ["playground"]
 keywords = ["playground"]
 repository = "https://github.com/kristof-mattei/advent-of-code-2025"
 include = ["src/**", "/LICENSE", "/LICENSE-*"]
-build = "src/build.rs"
 
 [dependencies]
 
