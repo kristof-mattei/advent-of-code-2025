@@ -2,7 +2,7 @@
 name = "advent-of-code-2025"
 version = "0.0.0-development"
 edition = "2024"
-rust-version = "1.91.0"
+rust-version = "1.91.1"
 authors = ["Kristof Mattei"]
 description = "Advent of Code 2025"
 license = "MIT"
@@ -217,6 +217,9 @@ verbose_file_reads = { level = "deny", priority = 127 }
 wildcard_enum_match_arm = { level = "deny", priority = 127 }
 
 # end restriction
+
+# merging ifs can hurts legibility, so it's not a good deny lint
+collapsible_if = { level = "allow", priority = 127 }
 
 # this has 0 performance implications, the binding is compiled away, and it could cause issues
 # when done blindly, plus it makes it harder to debug as you cannot put breakpoints on return
