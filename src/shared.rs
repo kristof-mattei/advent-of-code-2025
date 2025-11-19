@@ -1,17 +1,18 @@
 use std::cmp::Ordering;
 
-pub mod day;
 pub mod grids;
+pub mod quest;
 pub mod solution;
 pub mod tree;
 pub mod utils;
 
-pub trait Parts {
-    fn part_1(&self, input: &str) -> PartSolution;
-    fn part_2(&self, input: &str) -> PartSolution;
+pub trait Quest {
+    fn part_1(&self, input: &str) -> QuestSolution;
+    fn part_2(&self, input: &str) -> QuestSolution;
+    fn part_3(&self, input: &str) -> QuestSolution;
 }
 
-pub enum PartSolution {
+pub enum QuestSolution {
     I32(i32),
     U32(u32),
     I64(i64),
@@ -24,7 +25,7 @@ pub enum PartSolution {
     None,
 }
 
-impl std::fmt::Debug for PartSolution {
+impl std::fmt::Debug for QuestSolution {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match *self {
             Self::I32(arg0) => write!(f, "{}i32", arg0),
@@ -41,234 +42,234 @@ impl std::fmt::Debug for PartSolution {
     }
 }
 
-impl PartSolution {
+impl QuestSolution {
     #[must_use]
     pub fn has_solution(&self) -> bool {
-        !matches!(*self, PartSolution::None)
+        !matches!(*self, QuestSolution::None)
     }
 }
 
-impl PartialEq<PartSolution> for PartSolution {
-    fn eq(&self, other: &PartSolution) -> bool {
+impl PartialEq<QuestSolution> for QuestSolution {
+    fn eq(&self, other: &QuestSolution) -> bool {
         match *self {
-            PartSolution::I32(ref i) => i == other,
-            PartSolution::U32(ref i) => i == other,
-            PartSolution::I64(ref i) => i == other,
-            PartSolution::U64(ref i) => i == other,
-            PartSolution::ISize(ref i) => i == other,
-            PartSolution::USize(ref i) => i == other,
-            PartSolution::String(ref i) => i == other,
-            PartSolution::Vec(ref i) => i == other,
-            PartSolution::None => matches!(other, &PartSolution::None),
-            PartSolution::Manual => matches!(other, &PartSolution::Manual),
+            QuestSolution::I32(ref i) => i == other,
+            QuestSolution::U32(ref i) => i == other,
+            QuestSolution::I64(ref i) => i == other,
+            QuestSolution::U64(ref i) => i == other,
+            QuestSolution::ISize(ref i) => i == other,
+            QuestSolution::USize(ref i) => i == other,
+            QuestSolution::String(ref i) => i == other,
+            QuestSolution::Vec(ref i) => i == other,
+            QuestSolution::None => matches!(other, &QuestSolution::None),
+            QuestSolution::Manual => matches!(other, &QuestSolution::Manual),
         }
     }
 }
 
-impl From<i32> for PartSolution {
+impl From<i32> for QuestSolution {
     fn from(v: i32) -> Self {
-        PartSolution::I32(v)
+        QuestSolution::I32(v)
     }
 }
 
-impl From<u32> for PartSolution {
+impl From<u32> for QuestSolution {
     fn from(v: u32) -> Self {
-        PartSolution::U32(v)
+        QuestSolution::U32(v)
     }
 }
 
-impl From<i64> for PartSolution {
+impl From<i64> for QuestSolution {
     fn from(v: i64) -> Self {
-        PartSolution::I64(v)
+        QuestSolution::I64(v)
     }
 }
 
-impl From<u64> for PartSolution {
+impl From<u64> for QuestSolution {
     fn from(v: u64) -> Self {
-        PartSolution::U64(v)
+        QuestSolution::U64(v)
     }
 }
 
-impl From<isize> for PartSolution {
+impl From<isize> for QuestSolution {
     fn from(v: isize) -> Self {
-        PartSolution::ISize(v)
+        QuestSolution::ISize(v)
     }
 }
 
-impl From<usize> for PartSolution {
+impl From<usize> for QuestSolution {
     fn from(v: usize) -> Self {
-        PartSolution::USize(v)
+        QuestSolution::USize(v)
     }
 }
 
-impl From<Vec<String>> for PartSolution {
+impl From<Vec<String>> for QuestSolution {
     fn from(v: Vec<String>) -> Self {
-        PartSolution::Vec(v)
+        QuestSolution::Vec(v)
     }
 }
 
-impl From<String> for PartSolution {
+impl From<String> for QuestSolution {
     fn from(v: String) -> Self {
-        PartSolution::String(v)
+        QuestSolution::String(v)
     }
 }
 
-impl From<&'_ str> for PartSolution {
+impl From<&'_ str> for QuestSolution {
     fn from(v: &'_ str) -> Self {
-        PartSolution::String(v.into())
+        QuestSolution::String(v.into())
     }
 }
 
-impl From<Option<PartSolution>> for PartSolution {
-    fn from(value: Option<PartSolution>) -> Self {
+impl From<Option<QuestSolution>> for QuestSolution {
+    fn from(value: Option<QuestSolution>) -> Self {
         match value {
             Some(v) => v,
-            None => PartSolution::None,
+            None => QuestSolution::None,
         }
     }
 }
 
-impl std::fmt::Display for PartSolution {
+impl std::fmt::Display for QuestSolution {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let string = match *self {
-            PartSolution::I32(other) => other.to_string(),
-            PartSolution::U32(other) => other.to_string(),
-            PartSolution::I64(other) => other.to_string(),
-            PartSolution::U64(other) => other.to_string(),
-            PartSolution::ISize(other) => other.to_string(),
-            PartSolution::USize(other) => other.to_string(),
-            PartSolution::String(ref other) => other.to_owned(),
-            PartSolution::Vec(ref other) => format!("\n{}", other.join("\n")),
-            PartSolution::Manual => "Manual".to_owned(),
-            PartSolution::None => "None".to_owned(),
+            QuestSolution::I32(other) => other.to_string(),
+            QuestSolution::U32(other) => other.to_string(),
+            QuestSolution::I64(other) => other.to_string(),
+            QuestSolution::U64(other) => other.to_string(),
+            QuestSolution::ISize(other) => other.to_string(),
+            QuestSolution::USize(other) => other.to_string(),
+            QuestSolution::String(ref other) => other.to_owned(),
+            QuestSolution::Vec(ref other) => format!("\n{}", other.join("\n")),
+            QuestSolution::Manual => "Manual".to_owned(),
+            QuestSolution::None => "None".to_owned(),
         };
 
         write!(f, "{}", string)
     }
 }
 
-impl std::cmp::PartialEq<PartSolution> for i32 {
-    fn eq(&self, other: &PartSolution) -> bool {
+impl std::cmp::PartialEq<QuestSolution> for i32 {
+    fn eq(&self, other: &QuestSolution) -> bool {
         match *other {
-            PartSolution::I32(other) => *self == other,
-            PartSolution::U32(other) => i64::from(*self) == i64::from(other),
-            PartSolution::I64(other) => i64::from(*self) == other,
-            PartSolution::U64(other) => Ok(*self) == Self::try_from(other),
-            PartSolution::ISize(other) => Ok(*self) == Self::try_from(other),
-            PartSolution::USize(other) => Ok(*self) == Self::try_from(other),
-            PartSolution::String(_)
-            | PartSolution::Vec(_)
-            | PartSolution::Manual
-            | PartSolution::None => false,
+            QuestSolution::I32(other) => *self == other,
+            QuestSolution::U32(other) => i64::from(*self) == i64::from(other),
+            QuestSolution::I64(other) => i64::from(*self) == other,
+            QuestSolution::U64(other) => Ok(*self) == Self::try_from(other),
+            QuestSolution::ISize(other) => Ok(*self) == Self::try_from(other),
+            QuestSolution::USize(other) => Ok(*self) == Self::try_from(other),
+            QuestSolution::String(_)
+            | QuestSolution::Vec(_)
+            | QuestSolution::Manual
+            | QuestSolution::None => false,
         }
     }
 }
 
-impl std::cmp::PartialEq<PartSolution> for u32 {
-    fn eq(&self, other: &PartSolution) -> bool {
+impl std::cmp::PartialEq<QuestSolution> for u32 {
+    fn eq(&self, other: &QuestSolution) -> bool {
         match *other {
-            PartSolution::I32(other) => i64::from(*self) == i64::from(other),
-            PartSolution::U32(other) => *self == other,
-            PartSolution::I64(other) => i64::from(*self) == other,
-            PartSolution::U64(other) => u64::from(*self) == other,
-            PartSolution::ISize(other) => Ok(*self) == Self::try_from(other),
-            PartSolution::USize(other) => Ok(*self) == Self::try_from(other),
-            PartSolution::String(_)
-            | PartSolution::Vec(_)
-            | PartSolution::Manual
-            | PartSolution::None => false,
+            QuestSolution::I32(other) => i64::from(*self) == i64::from(other),
+            QuestSolution::U32(other) => *self == other,
+            QuestSolution::I64(other) => i64::from(*self) == other,
+            QuestSolution::U64(other) => u64::from(*self) == other,
+            QuestSolution::ISize(other) => Ok(*self) == Self::try_from(other),
+            QuestSolution::USize(other) => Ok(*self) == Self::try_from(other),
+            QuestSolution::String(_)
+            | QuestSolution::Vec(_)
+            | QuestSolution::Manual
+            | QuestSolution::None => false,
         }
     }
 }
 
-impl std::cmp::PartialEq<PartSolution> for i64 {
-    fn eq(&self, other: &PartSolution) -> bool {
+impl std::cmp::PartialEq<QuestSolution> for i64 {
+    fn eq(&self, other: &QuestSolution) -> bool {
         match *other {
-            PartSolution::I32(other) => *self == Self::from(other),
-            PartSolution::U32(other) => *self == Self::from(other),
-            PartSolution::I64(other) => *self == other,
-            PartSolution::U64(other) => Ok(*self) == Self::try_from(other),
-            PartSolution::ISize(other) => Ok(*self) == Self::try_from(other),
-            PartSolution::USize(other) => Ok(*self) == Self::try_from(other),
-            PartSolution::String(_)
-            | PartSolution::Vec(_)
-            | PartSolution::Manual
-            | PartSolution::None => false,
+            QuestSolution::I32(other) => *self == Self::from(other),
+            QuestSolution::U32(other) => *self == Self::from(other),
+            QuestSolution::I64(other) => *self == other,
+            QuestSolution::U64(other) => Ok(*self) == Self::try_from(other),
+            QuestSolution::ISize(other) => Ok(*self) == Self::try_from(other),
+            QuestSolution::USize(other) => Ok(*self) == Self::try_from(other),
+            QuestSolution::String(_)
+            | QuestSolution::Vec(_)
+            | QuestSolution::Manual
+            | QuestSolution::None => false,
         }
     }
 }
 
-impl std::cmp::PartialEq<PartSolution> for u64 {
-    fn eq(&self, other: &PartSolution) -> bool {
+impl std::cmp::PartialEq<QuestSolution> for u64 {
+    fn eq(&self, other: &QuestSolution) -> bool {
         match *other {
-            PartSolution::I32(other) => Ok(*self) == Self::try_from(other),
-            PartSolution::U32(other) => *self == Self::from(other),
-            PartSolution::I64(other) => Ok(*self) == Self::try_from(other),
-            PartSolution::U64(other) => *self == other,
-            PartSolution::ISize(other) => Ok(*self) == Self::try_from(other),
-            PartSolution::USize(other) => Ok(*self) == Self::try_from(other),
-            PartSolution::String(_)
-            | PartSolution::Vec(_)
-            | PartSolution::Manual
-            | PartSolution::None => false,
+            QuestSolution::I32(other) => Ok(*self) == Self::try_from(other),
+            QuestSolution::U32(other) => *self == Self::from(other),
+            QuestSolution::I64(other) => Ok(*self) == Self::try_from(other),
+            QuestSolution::U64(other) => *self == other,
+            QuestSolution::ISize(other) => Ok(*self) == Self::try_from(other),
+            QuestSolution::USize(other) => Ok(*self) == Self::try_from(other),
+            QuestSolution::String(_)
+            | QuestSolution::Vec(_)
+            | QuestSolution::Manual
+            | QuestSolution::None => false,
         }
     }
 }
 
-impl std::cmp::PartialEq<PartSolution> for isize {
-    fn eq(&self, other: &PartSolution) -> bool {
+impl std::cmp::PartialEq<QuestSolution> for isize {
+    fn eq(&self, other: &QuestSolution) -> bool {
         match *other {
-            PartSolution::I32(other) => Ok(*self) == Self::try_from(other),
-            PartSolution::U32(other) => Ok(*self) == Self::try_from(other),
-            PartSolution::I64(other) => Ok(*self) == Self::try_from(other),
-            PartSolution::U64(other) => Ok(*self) == Self::try_from(other),
-            PartSolution::ISize(other) => *self == other,
-            PartSolution::USize(other) => Ok(*self) == Self::try_from(other),
-            PartSolution::String(_)
-            | PartSolution::Vec(_)
-            | PartSolution::Manual
-            | PartSolution::None => false,
+            QuestSolution::I32(other) => Ok(*self) == Self::try_from(other),
+            QuestSolution::U32(other) => Ok(*self) == Self::try_from(other),
+            QuestSolution::I64(other) => Ok(*self) == Self::try_from(other),
+            QuestSolution::U64(other) => Ok(*self) == Self::try_from(other),
+            QuestSolution::ISize(other) => *self == other,
+            QuestSolution::USize(other) => Ok(*self) == Self::try_from(other),
+            QuestSolution::String(_)
+            | QuestSolution::Vec(_)
+            | QuestSolution::Manual
+            | QuestSolution::None => false,
         }
     }
 }
 
-impl std::cmp::PartialEq<PartSolution> for usize {
-    fn eq(&self, other: &PartSolution) -> bool {
+impl std::cmp::PartialEq<QuestSolution> for usize {
+    fn eq(&self, other: &QuestSolution) -> bool {
         match *other {
-            PartSolution::I32(other) => Ok(*self) == Self::try_from(other),
-            PartSolution::U32(other) => Ok(*self) == Self::try_from(other),
-            PartSolution::I64(other) => Ok(*self) == Self::try_from(other),
-            PartSolution::U64(other) => Ok(*self) == Self::try_from(other),
-            PartSolution::ISize(other) => Ok(*self) == Self::try_from(other),
-            PartSolution::USize(other) => *self == other,
-            PartSolution::String(_)
-            | PartSolution::Vec(_)
-            | PartSolution::Manual
-            | PartSolution::None => false,
+            QuestSolution::I32(other) => Ok(*self) == Self::try_from(other),
+            QuestSolution::U32(other) => Ok(*self) == Self::try_from(other),
+            QuestSolution::I64(other) => Ok(*self) == Self::try_from(other),
+            QuestSolution::U64(other) => Ok(*self) == Self::try_from(other),
+            QuestSolution::ISize(other) => Ok(*self) == Self::try_from(other),
+            QuestSolution::USize(other) => *self == other,
+            QuestSolution::String(_)
+            | QuestSolution::Vec(_)
+            | QuestSolution::Manual
+            | QuestSolution::None => false,
         }
     }
 }
 
-impl std::cmp::PartialEq<PartSolution> for String {
-    fn eq(&self, other: &PartSolution) -> bool {
+impl std::cmp::PartialEq<QuestSolution> for String {
+    fn eq(&self, other: &QuestSolution) -> bool {
         match *other {
-            PartSolution::String(ref s) => s == self,
-            PartSolution::I32(_)
-            | PartSolution::U32(_)
-            | PartSolution::I64(_)
-            | PartSolution::U64(_)
-            | PartSolution::ISize(_)
-            | PartSolution::USize(_)
-            | PartSolution::Vec(_)
-            | PartSolution::Manual
-            | PartSolution::None => false,
+            QuestSolution::String(ref s) => s == self,
+            QuestSolution::I32(_)
+            | QuestSolution::U32(_)
+            | QuestSolution::I64(_)
+            | QuestSolution::U64(_)
+            | QuestSolution::ISize(_)
+            | QuestSolution::USize(_)
+            | QuestSolution::Vec(_)
+            | QuestSolution::Manual
+            | QuestSolution::None => false,
         }
     }
 }
 
-impl std::cmp::PartialEq<PartSolution> for Vec<String> {
-    fn eq(&self, other: &PartSolution) -> bool {
-        matches!(*other, PartSolution::Vec(ref v) if {
+impl std::cmp::PartialEq<QuestSolution> for Vec<String> {
+    fn eq(&self, other: &QuestSolution) -> bool {
+        matches!(*other, QuestSolution::Vec(ref v) if {
             if v.len() != self.len() {
                 return false;
             }
@@ -284,13 +285,13 @@ impl std::cmp::PartialEq<PartSolution> for Vec<String> {
     }
 }
 
-impl std::cmp::PartialOrd<PartSolution> for i32 {
-    fn partial_cmp(&self, other: &PartSolution) -> Option<Ordering> {
+impl std::cmp::PartialOrd<QuestSolution> for i32 {
+    fn partial_cmp(&self, other: &QuestSolution) -> Option<Ordering> {
         match *other {
-            PartSolution::I32(ref other) => self.partial_cmp(other),
-            PartSolution::U32(other) => i64::from(*self).partial_cmp(&i64::from(other)),
-            PartSolution::I64(ref other) => i64::from(*self).partial_cmp(other),
-            PartSolution::U64(other) => {
+            QuestSolution::I32(ref other) => self.partial_cmp(other),
+            QuestSolution::U32(other) => i64::from(*self).partial_cmp(&i64::from(other)),
+            QuestSolution::I64(ref other) => i64::from(*self).partial_cmp(other),
+            QuestSolution::U64(other) => {
                 if let Ok(other) = Self::try_from(other) {
                     self.partial_cmp(&other)
                 } else {
@@ -298,7 +299,7 @@ impl std::cmp::PartialOrd<PartSolution> for i32 {
                     Some(Ordering::Less)
                 }
             },
-            PartSolution::USize(other) => {
+            QuestSolution::USize(other) => {
                 if let Ok(other) = Self::try_from(other) {
                     self.partial_cmp(&other)
                 } else {
@@ -306,19 +307,19 @@ impl std::cmp::PartialOrd<PartSolution> for i32 {
                     Some(Ordering::Less)
                 }
             },
-            PartSolution::ISize(_)
-            | PartSolution::String(_)
-            | PartSolution::Vec(_)
-            | PartSolution::Manual
-            | PartSolution::None => None,
+            QuestSolution::ISize(_)
+            | QuestSolution::String(_)
+            | QuestSolution::Vec(_)
+            | QuestSolution::Manual
+            | QuestSolution::None => None,
         }
     }
 }
 
-impl std::cmp::PartialOrd<PartSolution> for u32 {
-    fn partial_cmp(&self, other: &PartSolution) -> Option<Ordering> {
+impl std::cmp::PartialOrd<QuestSolution> for u32 {
+    fn partial_cmp(&self, other: &QuestSolution) -> Option<Ordering> {
         match *other {
-            PartSolution::I32(other) => {
+            QuestSolution::I32(other) => {
                 if let Ok(other) = Self::try_from(other) {
                     self.partial_cmp(&other)
                 } else {
@@ -326,10 +327,10 @@ impl std::cmp::PartialOrd<PartSolution> for u32 {
                     Some(Ordering::Greater)
                 }
             },
-            PartSolution::U32(ref other) => self.partial_cmp(other),
-            PartSolution::I64(ref other) => i64::from(*self).partial_cmp(other),
-            PartSolution::U64(ref other) => u64::from(*self).partial_cmp(other),
-            PartSolution::USize(other) => {
+            QuestSolution::U32(ref other) => self.partial_cmp(other),
+            QuestSolution::I64(ref other) => i64::from(*self).partial_cmp(other),
+            QuestSolution::U64(ref other) => u64::from(*self).partial_cmp(other),
+            QuestSolution::USize(other) => {
                 if let Ok(other) = Self::try_from(other) {
                     self.partial_cmp(&other)
                 } else {
@@ -337,19 +338,19 @@ impl std::cmp::PartialOrd<PartSolution> for u32 {
                     Some(Ordering::Less)
                 }
             },
-            PartSolution::ISize(_)
-            | PartSolution::String(_)
-            | PartSolution::Vec(_)
-            | PartSolution::Manual
-            | PartSolution::None => None,
+            QuestSolution::ISize(_)
+            | QuestSolution::String(_)
+            | QuestSolution::Vec(_)
+            | QuestSolution::Manual
+            | QuestSolution::None => None,
         }
     }
 }
 
-impl std::cmp::PartialOrd<PartSolution> for u64 {
-    fn partial_cmp(&self, other: &PartSolution) -> Option<Ordering> {
+impl std::cmp::PartialOrd<QuestSolution> for u64 {
+    fn partial_cmp(&self, other: &QuestSolution) -> Option<Ordering> {
         match *other {
-            PartSolution::I32(other) => {
+            QuestSolution::I32(other) => {
                 if let Ok(other) = Self::try_from(other) {
                     self.partial_cmp(&other)
                 } else {
@@ -357,8 +358,8 @@ impl std::cmp::PartialOrd<PartSolution> for u64 {
                     Some(Ordering::Greater)
                 }
             },
-            PartSolution::U32(other) => self.partial_cmp(&u64::from(other)),
-            PartSolution::I64(other) => {
+            QuestSolution::U32(other) => self.partial_cmp(&u64::from(other)),
+            QuestSolution::I64(other) => {
                 if let Ok(other) = Self::try_from(other) {
                     self.partial_cmp(&other)
                 } else {
@@ -366,8 +367,8 @@ impl std::cmp::PartialOrd<PartSolution> for u64 {
                     Some(Ordering::Greater)
                 }
             },
-            PartSolution::U64(ref other) => self.partial_cmp(other),
-            PartSolution::USize(other) => {
+            QuestSolution::U64(ref other) => self.partial_cmp(other),
+            QuestSolution::USize(other) => {
                 if let Ok(other) = Self::try_from(other) {
                     self.partial_cmp(&other)
                 } else {
@@ -375,19 +376,19 @@ impl std::cmp::PartialOrd<PartSolution> for u64 {
                     Some(Ordering::Less)
                 }
             },
-            PartSolution::ISize(_)
-            | PartSolution::String(_)
-            | PartSolution::Vec(_)
-            | PartSolution::Manual
-            | PartSolution::None => None,
+            QuestSolution::ISize(_)
+            | QuestSolution::String(_)
+            | QuestSolution::Vec(_)
+            | QuestSolution::Manual
+            | QuestSolution::None => None,
         }
     }
 }
 
-impl std::cmp::PartialOrd<PartSolution> for usize {
-    fn partial_cmp(&self, other: &PartSolution) -> Option<Ordering> {
+impl std::cmp::PartialOrd<QuestSolution> for usize {
+    fn partial_cmp(&self, other: &QuestSolution) -> Option<Ordering> {
         match *other {
-            PartSolution::I32(other) => {
+            QuestSolution::I32(other) => {
                 if other.is_negative() {
                     Some(Ordering::Greater)
                 } else if let Ok(other) = Self::try_from(other) {
@@ -397,7 +398,7 @@ impl std::cmp::PartialOrd<PartSolution> for usize {
                     Some(Ordering::Less)
                 }
             },
-            PartSolution::U32(other) => {
+            QuestSolution::U32(other) => {
                 // if this fails, that means that usize is smaller than u32
                 if let Ok(other) = Self::try_from(other) {
                     self.partial_cmp(&other)
@@ -406,7 +407,7 @@ impl std::cmp::PartialOrd<PartSolution> for usize {
                     Some(Ordering::Less)
                 }
             },
-            PartSolution::I64(other) => {
+            QuestSolution::I64(other) => {
                 if other.is_negative() {
                     Some(Ordering::Greater)
                 } else if let Ok(other) = Self::try_from(other) {
@@ -416,7 +417,7 @@ impl std::cmp::PartialOrd<PartSolution> for usize {
                     Some(Ordering::Less)
                 }
             },
-            PartSolution::U64(other) => {
+            QuestSolution::U64(other) => {
                 // if this fails, that means that usize is smaller than u64
                 if let Ok(other) = Self::try_from(other) {
                     self.partial_cmp(&other)
@@ -425,37 +426,37 @@ impl std::cmp::PartialOrd<PartSolution> for usize {
                     Some(Ordering::Less)
                 }
             },
-            PartSolution::USize(other) => other.partial_cmp(self),
-            PartSolution::ISize(_)
-            | PartSolution::String(_)
-            | PartSolution::Vec(_)
-            | PartSolution::Manual
-            | PartSolution::None => None,
+            QuestSolution::USize(other) => other.partial_cmp(self),
+            QuestSolution::ISize(_)
+            | QuestSolution::String(_)
+            | QuestSolution::Vec(_)
+            | QuestSolution::Manual
+            | QuestSolution::None => None,
         }
     }
 }
 
-impl std::cmp::PartialOrd<PartSolution> for String {
-    fn partial_cmp(&self, other: &PartSolution) -> Option<Ordering> {
+impl std::cmp::PartialOrd<QuestSolution> for String {
+    fn partial_cmp(&self, other: &QuestSolution) -> Option<Ordering> {
         match *other {
-            PartSolution::String(ref s) => s.partial_cmp(self),
-            PartSolution::I32(_)
-            | PartSolution::U32(_)
-            | PartSolution::I64(_)
-            | PartSolution::U64(_)
-            | PartSolution::ISize(_)
-            | PartSolution::USize(_)
-            | PartSolution::Vec(_)
-            | PartSolution::Manual
-            | PartSolution::None => None,
+            QuestSolution::String(ref s) => s.partial_cmp(self),
+            QuestSolution::I32(_)
+            | QuestSolution::U32(_)
+            | QuestSolution::I64(_)
+            | QuestSolution::U64(_)
+            | QuestSolution::ISize(_)
+            | QuestSolution::USize(_)
+            | QuestSolution::Vec(_)
+            | QuestSolution::Manual
+            | QuestSolution::None => None,
         }
     }
 }
 
-impl std::cmp::PartialOrd<PartSolution> for Vec<String> {
-    fn partial_cmp(&self, other: &PartSolution) -> Option<Ordering> {
+impl std::cmp::PartialOrd<QuestSolution> for Vec<String> {
+    fn partial_cmp(&self, other: &QuestSolution) -> Option<Ordering> {
         match *other {
-            PartSolution::Vec(ref v) => {
+            QuestSolution::Vec(ref v) => {
                 if v.len() != self.len() {
                     return None;
                 }
@@ -468,15 +469,15 @@ impl std::cmp::PartialOrd<PartSolution> for Vec<String> {
 
                 Some(Ordering::Equal)
             },
-            PartSolution::I32(_)
-            | PartSolution::U32(_)
-            | PartSolution::I64(_)
-            | PartSolution::U64(_)
-            | PartSolution::ISize(_)
-            | PartSolution::USize(_)
-            | PartSolution::String(_)
-            | PartSolution::Manual
-            | PartSolution::None => None,
+            QuestSolution::I32(_)
+            | QuestSolution::U32(_)
+            | QuestSolution::I64(_)
+            | QuestSolution::U64(_)
+            | QuestSolution::ISize(_)
+            | QuestSolution::USize(_)
+            | QuestSolution::String(_)
+            | QuestSolution::Manual
+            | QuestSolution::None => None,
         }
     }
 }
