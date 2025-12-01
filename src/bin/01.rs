@@ -1,5 +1,3 @@
-use std::str::FromStr;
-
 use advent_of_code_2025::shared::{PartSolution, Parts};
 
 advent_of_code_2025::solution!(1031, 5831);
@@ -79,7 +77,7 @@ impl Parts for Solution {
 
                     if remainder > position {
                         if position != 0 {
-                        result += 1;
+                            result += 1;
                         } else {
                             // don't count this is a pass if we're already at 0
                         }
