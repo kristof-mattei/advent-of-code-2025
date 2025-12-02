@@ -12,7 +12,6 @@ repository = "https://github.com/kristof-mattei/advent-of-code-2025"
 include = ["src/**", "/LICENSE", "/LICENSE-*"]
 
 [dependencies]
-
 #hashbrown = { version = "0.16.0", default-features = false, features = [
 #    "default-hasher",
 #    "inline-more",
