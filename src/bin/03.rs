@@ -2,7 +2,7 @@ use std::mem::swap;
 
 use advent_of_code_2025::shared::{PartSolution, Parts};
 
-advent_of_code_2025::solution!(17229, 170_520_923_035_051_u64);
+advent_of_code_2025::solution!(17229_u64, 170_520_923_035_051_u64);
 
 fn parse_input(input: &str) -> Vec<Vec<u8>> {
     input
@@ -11,35 +11,27 @@ fn parse_input(input: &str) -> Vec<Vec<u8>> {
         .collect::<Vec<Vec<u8>>>()
 }
 
-fn two_batteries(battery_pack: &[u8]) -> (Option<u32>, Option<u32>) {
-    let mut b1 = Option::None;
-    let mut b2 = Option::None;
+fn find_top_batteries<const N: usize>(battery_packs: &[Vec<u8>]) -> u64 {
+    let mut sum: u64 = 0;
 
-    for battery in battery_pack.iter().rev() {
-        let battery: u32 = (*battery).into();
+    for battery_pack in battery_packs {
+        let top_n = find_top_batteries_in_pack::<N>(battery_pack);
 
-        if b2.is_none() {
-            b2 = Some(battery);
-            continue;
-        }
+        for (index, b) in top_n.iter().rev().enumerate() {
+            let multiplier = 10_u64.pow(u32::try_from(index).unwrap());
+            let b = u64::from(*b);
 
-        if Some(battery) >= b1 {
-            if b2 < b1 {
-                swap(&mut b1, &mut b2);
-            }
-
-            b1 = Some(battery);
-            continue;
+            sum += b * multiplier;
         }
     }
 
-    (b1, b2)
+    sum
 }
 
-fn twelve_batteries(battery_pack: &[u8]) -> Vec<u8> {
-    let mut result = battery_pack[(battery_pack.len() - 12)..].to_vec();
+fn find_top_batteries_in_pack<const N: usize>(battery_pack: &[u8]) -> Vec<u8> {
+    let mut result = battery_pack[(battery_pack.len().saturating_sub(N))..].to_vec();
 
-    for b in battery_pack.iter().rev().skip(12) {
+    for b in battery_pack.iter().rev().skip(N) {
         insert_b(*b, &mut result);
     }
 
@@ -60,33 +52,15 @@ impl Parts for Solution {
     fn part_1(&self, input: &str) -> PartSolution {
         let parsed = parse_input(input);
 
-        let mut sum = 0;
+        let sum = find_top_batteries::<2>(&parsed);
 
-        for battery_pack in parsed {
-            let (b1, b2) = two_batteries(&battery_pack);
-
-            sum += b1.unwrap_or_default() * 10;
-            sum += b2.unwrap_or_default();
-        }
-
-        PartSolution::U32(sum)
+        PartSolution::U64(sum)
     }
 
     fn part_2(&self, input: &str) -> PartSolution {
         let parsed = parse_input(input);
 
-        let mut sum: u64 = 0;
-
-        for battery_pack in parsed {
-            let twelve_top = twelve_batteries(&battery_pack);
-
-            for (index, b) in twelve_top.iter().rev().enumerate() {
-                let multiplier = 10_u64.pow(u32::try_from(index).unwrap());
-                let b = u64::from(*b);
-
-                sum += b * multiplier;
-            }
-        }
+        let sum = find_top_batteries::<12>(&parsed);
 
         PartSolution::U64(sum)
     }
@@ -103,12 +77,12 @@ mod test {
 
         #[test]
         fn outcome() {
-            test_part_1!(17229);
+            test_part_1!(17229_u64);
         }
 
         #[test]
         fn example() {
-            test_example_part_1!(357);
+            test_example_part_1!(357_u64);
         }
     }
 

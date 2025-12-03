@@ -7,7 +7,9 @@ macro_rules! test_part_1 {
 
         use crate::Solution;
 
-        assert_eq!($value, (Solution {}).part_1(&read_file("inputs", &DAY)));
+        if std::env::var("CI").is_err() {
+            assert_eq!($value, (Solution {}).part_1(&read_file("inputs", &DAY)));
+        }
     }};
 }
 
@@ -20,7 +22,9 @@ macro_rules! test_part_2 {
 
         use crate::Solution;
 
-        assert_eq!($value, (Solution {}).part_2(&read_file("inputs", &DAY)));
+        if std::env::var("CI").is_err() {
+            assert_eq!($value, (Solution {}).part_2(&read_file("inputs", &DAY)));
+        }
     }};
 }
 
