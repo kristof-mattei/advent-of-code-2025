@@ -12,11 +12,11 @@ repository = "https://github.com/kristof-mattei/advent-of-code-2025"
 include = ["src/**", "/LICENSE", "/LICENSE-*"]
 
 [dependencies]
-#hashbrown = { version = "0.16.0", default-features = false, features = [
-#    "default-hasher",
-#    "inline-more",
-#    "equivalent",
-#] }
+hashbrown = { version = "0.16.0", default-features = false, features = [
+    "default-hasher",
+    "inline-more",
+    "equivalent",
+] }
 #regex = { version = "1.11.3", features = ["perf", "unicode-perl", "std"] }
 
 [lints.clippy]
