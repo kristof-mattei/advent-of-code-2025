@@ -17,6 +17,7 @@ hashbrown = { version = "0.16.1", default-features = false, features = [
     "equivalent",
     "inline-more",
 ] }
+z3 = "0.19.6"
 #regex = { version = "1.11.3", features = ["perf", "unicode-perl", "std"] }
 
 [lints.clippy]
@@ -199,7 +200,8 @@ unimplemented = { level = "deny", priority = 127 }
 unnecessary_safety_comment = { level = "deny", priority = 127 }
 unnecessary_safety_doc = { level = "deny", priority = 127 }
 unnecessary_self_imports = { level = "deny", priority = 127 }
-unneeded_field_pattern = { level = "deny", priority = 127 }
+
+# unneeded_field_pattern = { level = "deny", priority = 127 }
 # No, this is information for the reader and compiler
 # unreachable = { level = "deny", priority = 127 }
 unseparated_literal_suffix = { level = "deny", priority = 127 }
